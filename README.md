@@ -15,4 +15,4 @@ python 2DTankSim.py
 Currently no input is being read from the user to move the tanks. This will be implemented next.
 
 ## Contributing
-Pull requests are welcome. Please use the above "Pull Request" button and you will be able to have your own branch to this project.
+Pull requests are welcome. Please use the above "New Pull Request" button and you will be able to have your own branch to this project.
