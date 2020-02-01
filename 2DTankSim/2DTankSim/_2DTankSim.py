@@ -1,5 +1,9 @@
 import turtle
 
+# Global variables
+forward = True
+pos = 0
+
 # Class that defines a tank object
 class Tank:
     pos = [0,0]		# Tank position [x,y]
@@ -26,6 +30,25 @@ def DrawTank(xpos, ypos, heading, color):
     tur.circle(20,steps = 3)
     tur.end_fill()
 
+def Move(speed):
+    global forward
+    global pos
+
+    if forward:             # Bounce back and forth on the screen
+        pos+=speed
+
+        if pos >= 440:
+            forward = False
+        player1.pos[0] = player1.pos[0] + speed
+        player2.pos[0] = player2.pos[0] - speed
+    else:
+        pos-=speed
+
+        if pos <= 0:
+            forward = True
+        player1.pos[0] = player1.pos[0] - speed
+        player2.pos[0] = player2.pos[0] + speed
+
 screen = turtle.Screen()			# Instantiate screen object
 screen.setup(1000,1000)				# Screen Size 1000 by 1000 pixels
 screen.bgcolor("lightgreen")		# Set background color
@@ -49,11 +72,6 @@ player2.pos = [440,-25]
 player2.heading = -90
 player2.color = "red"
 
-# Initalize variables(Square)
-movespeed = .5				# Larger number means the tank movement will be faster
-pos = 0						
-forward = True
-
 while True :                 # Infinite game loop
 
     tur.clear()
@@ -63,18 +81,5 @@ while True :                 # Infinite game loop
 
     screen.update()         # Display turtle drawing to the screen
 
-    if forward:             # bounce back and forth on the screen
-        pos+=movespeed
-
-        if pos >= 440:
-            forward = False
-        player1.pos[0] = player1.pos[0] + movespeed
-        player2.pos[0] = player2.pos[0] - movespeed
-    else:
-        pos-=movespeed
-
-        if pos <= 0:
-            forward = True
-        player1.pos[0] = player1.pos[0] - movespeed
-        player2.pos[0] = player2.pos[0] + movespeed
+    Move(player1.speed)
 
