@@ -12,7 +12,7 @@ python 2DTankSim.py
 
 ## Usage
 
-Currently no input is being read from the user to move the tanks. This will be implemented next.
+User input is controlled by using the wasd keys for player one and the arrows keys for player two. These keys will move the two different tanks.
 
 ## Contributing
 Pull requests are welcome. Please use the above "New Pull Request" button and you will be able to have your own branch to this project.
