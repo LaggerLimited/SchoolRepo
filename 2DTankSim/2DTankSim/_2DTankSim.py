@@ -9,7 +9,7 @@ class Tank:
     pos = [0,0]		# Tank position [x,y]
     heading = 0		# Heading or angle the tank is at
     ID = 0			# ID integer to differentiate this tank object from another
-    speed = .2		# Tank movement speed
+    speed = 3		# Tank movement speed
     health = 100	# Health starts at 100 and will deminish in battle
     active = True	# Boolean to control state of object (alive/dead)
     team = ""		# String value for a team name
@@ -30,28 +30,48 @@ def DrawTank(xpos, ypos, heading, color):
     tur.circle(20,steps = 3)
     tur.end_fill()
 
-def Move(speed):
-    global forward
-    global pos
+def MovePlayer1():
+    player1speed = player1.speed
+    def moveup():
+        player1.pos[1] += player1speed
+ 
+    def moveleft():
+        player1.pos[0] -= player1speed
+ 
+    def moveright():
+        player1.pos[0] += player1speed
+ 
+    def movedown():
+        player1.pos[1] -= player1speed
 
-    if forward:             # Bounce back and forth on the screen
-        pos+=speed
+    screen.onkeypress(moveup, "w")
+    screen.onkeypress(moveleft, "a")
+    screen.onkeypress(moveright, "d")
+    screen.onkeypress(movedown, "s")
 
-        if pos >= 440:
-            forward = False
-        player1.pos[0] = player1.pos[0] + speed
-        player2.pos[0] = player2.pos[0] - speed
-    else:
-        pos-=speed
+def MovePlayer2():
+    player2speed = player2.speed
+    def moveup():
+        player2.pos[1] += player2speed
+ 
+    def moveleft():
+        player2.pos[0] -= player2speed
+ 
+    def moveright():
+        player2.pos[0] += player2speed
+ 
+    def movedown():
+        player2.pos[1] -= player2speed
 
-        if pos <= 0:
-            forward = True
-        player1.pos[0] = player1.pos[0] - speed
-        player2.pos[0] = player2.pos[0] + speed
+    screen.onkeypress(moveup, "Up")
+    screen.onkeypress(moveleft, "Left")
+    screen.onkeypress(moveright, "Right")
+    screen.onkeypress(movedown, "Down")
 
 screen = turtle.Screen()			# Instantiate screen object
 screen.setup(1000,1000)				# Screen Size 1000 by 1000 pixels
 screen.bgcolor("lightgreen")		# Set background color
+screen.title("2D Tank Sim")         # Set title at the top of the screen
 screen.tracer(0)					# Turn turtle animation off for update drawings
 tur = turtle.Turtle()				# Create turtle object
 tur.color("black")					# Set turtle color
@@ -80,6 +100,7 @@ while True :                 # Infinite game loop
     DrawTank(player2.pos[0],player2.pos[1],player2.heading,player2.color)
 
     screen.update()         # Display turtle drawing to the screen
+    screen.listen()         # Listen for events like key presses
 
-    Move(player1.speed)
-
+    MovePlayer1()
+    MovePlayer2()
