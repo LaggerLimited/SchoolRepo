@@ -4,7 +4,7 @@
 
 ## Running the Program
 
-Run by opening a shell and navigating to the directory in which the file is downloaded. The use the command:
+Run by opening a shell and navigating to the directory in which the file is downloaded. Then use the command:
 
 ```bash
 python 2DTankSim.py
