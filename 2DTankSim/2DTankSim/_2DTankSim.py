@@ -1,106 +1,105 @@
 import turtle
 
-# Global variables
-forward = True
-pos = 0
+import turtle, random
+from math import *
 
-# Class that defines a tank object
+#number of tanks, including the player
+tank_quantity = 10
+
 class Tank:
-    pos = [0,0]		# Tank position [x,y]
-    heading = 0		# Heading or angle the tank is at
-    ID = 0			# ID integer to differentiate this tank object from another
-    speed = 3		# Tank movement speed
-    health = 100	# Health starts at 100 and will deminish in battle
-    active = True	# Boolean to control state of object (alive/dead)
-    team = ""		# String value for a team name
-    color = ""		# String value for color
+    def __init__(self, x=0, y=0, ang=0, color='red'):
+        self.x_pos = x
+        self.y_pos = y
+        self.angle = ang
+        self.name = ""
+        self.active = True
+        self.team = 0
+        self.color = color
+        self.health = 100
+        self.myTurtle = turtle.Turtle()
+        self.myTurtle.color(self.color)
+        self.myTurtle.up()
+        self.myTurtle.speed('fastest')
+        self.myTurtle.goto(self.x_pos,self.y_pos)
 
-def DrawTank(xpos, ypos, heading, color):
-    # Set draw position
-    tur.penup()
-    tur.goto(xpos, ypos)			# Init position at left side of the screen
-    tur.pendown()
-    tur.setheading(heading)			# Set orientation of turtle 0-east 90-north 180-east 270-south
-    tur.begin_fill()
-    tur.fillcolor(color)
-    tur.circle(30,steps= 64)
-    tur.end_fill()
-    tur.begin_fill()
-    tur.fillcolor("black")
-    tur.circle(20,steps = 3)
-    tur.end_fill()
+    def getPos(self):
+        return [self.x_pos,self.y_pos]
+    def addAngle(self, turn = 0):
+        self.myTurtle.right(turn)
+        self.angle=self.myTurtle.heading()
+        return self.angle
+    def moveForward(self, distance):
+        self.myTurtle.forward(distance) 
+        self.x_pos = self.myTurtle.pos()[0]
+        self.y_pos = self.myTurtle.pos()[1]
+    def draw(self):          
+        pass
+        #We currently use the turtle as the tank
+    def turnTo(self,heading):
+        self.myTurtle.seth(heading)
+    def findNearestTarget():
+        for i in range(0,tank_quantity):
+            test_pos = tanks[i].getPos()
+            print(test_pos)
+            test_dist = false
+    def shootingSolution(self, i):
+        target_pos =tanks[i].getPos()
+        squared = abs((target_pos[0]-self.x_pos)**2 + (target_pos[1]-self.y_pos)**2)
+        if squared != 0:
+            distance = sqrt(squared)
+        else:
+            distance = 0
+        print("dist",distance)
+        if target_pos[0] > self.x_pos and target_pos[1] > self.y_pos:
+            print("q1")
+            angle = degrees(atan((target_pos[1] - self.y_pos)/(target_pos[0] - self.x_pos)))
+        elif target_pos[0] < self.x_pos and target_pos[1] > self.y_pos:
+            print("q2")
+            angle = 180-degrees(asin((target_pos[1] - self.y_pos) / distance))
+        elif target_pos[0] < self.x_pos and target_pos[1] < self.y_pos:
+            print("q3")
+            angle = 180+degrees(atan(abs(target_pos[1] - self.y_pos)/abs(target_pos[0] - self.x_pos)))
+        elif target_pos[0] > self.x_pos and target_pos[1] < self.y_pos:
+            print("q4")
+            angle = 360-degrees(acos(abs(target_pos[0] - self.x_pos) / distance))
+        else:
+            angle = 0
+        print ("angle",angle)
+        return angle
 
-def MovePlayer1():
-    player1speed = player1.speed
-    def moveup():
-        player1.pos[1] += player1speed
- 
-    def moveleft():
-        player1.pos[0] -= player1speed
- 
-    def moveright():
-        player1.pos[0] += player1speed
- 
-    def movedown():
-        player1.pos[1] -= player1speed
+#Set up tanks
+tanks = [Tank(30, 30, 90, 'yellow')]
 
-    screen.onkeypress(moveup, "w")
-    screen.onkeypress(moveleft, "a")
-    screen.onkeypress(moveright, "d")
-    screen.onkeypress(movedown, "s")
 
-def MovePlayer2():
-    player2speed = player2.speed
-    def moveup():
-        player2.pos[1] += player2speed
- 
-    def moveleft():
-        player2.pos[0] -= player2speed
- 
-    def moveright():
-        player2.pos[0] += player2speed
- 
-    def movedown():
-        player2.pos[1] -= player2speed
+for i in range(0,tank_quantity-1):
+    tanks.append(Tank(random.randint(-200,200),random.randint(-200,200),random.randint(0,360),random.choice(['red','green','blue','black'])))
 
-    screen.onkeypress(moveup, "Up")
-    screen.onkeypress(moveleft, "Left")
-    screen.onkeypress(moveright, "Right")
-    screen.onkeypress(movedown, "Down")
+def keyUp():
+    tanks[0].moveForward(5)
+def keyLeft():
+    tanks[0].addAngle(-5)
+def keyRight():
+    tanks[0].addAngle(5)
+def keyDown():
+    turtle.bye()
 
 screen = turtle.Screen()			# Instantiate screen object
-screen.setup(1000,1000)				# Screen Size 1000 by 1000 pixels
+screen.setup(500,500)				# Screen Size 500 by 500 pixels
 screen.bgcolor("lightgreen")		# Set background color
 screen.title("2D Tank Sim")         # Set title at the top of the screen
 screen.tracer(0)					# Turn turtle animation off for update drawings
-tur = turtle.Turtle()				# Create turtle object
-tur.color("black")					# Set turtle color
-tur.speed(0)						# Set speed to draw as fast as possible
-tur.width(4)						# Set a wider draw path
-tur.hideturtle()					# Hide the turtle
 
-# Instantiate Tank objects for each player
-player1 = Tank()
-player1.ID = 1
-player1.pos = [-440,-25]
-player1.heading = 90
-player1.color = "blue"
+screen.onkeypress(keyUp, "Up")
+screen.onkeypress(keyLeft, "Left")
+screen.onkeypress(keyRight, "Right")
+screen.onkeypress(keyDown, "Down")
 
-player2 = Tank()
-player2.ID = 2
-player2.pos = [440,-25]
-player2.heading = -90
-player2.color = "red"
 
 while True :                 # Infinite game loop
 
-    tur.clear()
-
-    DrawTank(player1.pos[0],player1.pos[1],player1.heading,player1.color)
-    DrawTank(player2.pos[0],player2.pos[1],player2.heading,player2.color)
-
+    
     screen.update()         # Display turtle drawing to the screen
-    screen.listen()         # Listen for events like key presses
 
-    MovePlayer1()
-    MovePlayer2()
+    screen.listen()         # Listen for events like key presses
+    for i in range(1,tank_quantity):
+        tanks[i].turnTo(tanks[i].shootingSolution(0))
