@@ -1,13 +1,12 @@
-import turtle
-
 import turtle, random
 from math import *
 
 #number of tanks, including the player
-tank_quantity = 10
+tank_quantity = 5
 
 class Tank:
-    def __init__(self, x=0, y=0, ang=0, color='red'):
+    def __init__(self, id, x=0, y=0, ang=0, color='red'):
+        self.id = id
         self.x_pos = x
         self.y_pos = y
         self.angle = ang
@@ -21,6 +20,7 @@ class Tank:
         self.myTurtle.up()
         self.myTurtle.speed('fastest')
         self.myTurtle.goto(self.x_pos,self.y_pos)
+        self.enemies = []
 
     def getPos(self):
         return [self.x_pos,self.y_pos]
@@ -37,11 +37,26 @@ class Tank:
         #We currently use the turtle as the tank
     def turnTo(self,heading):
         self.myTurtle.seth(heading)
-    def findNearestTarget():
+    def findNearestTarget(self):
+        #populate a list of enemies
+        self.enemies = []
         for i in range(0,tank_quantity):
-            test_pos = tanks[i].getPos()
-            print(test_pos)
-            test_dist = false
+            if i != self.id:
+                self.enemies.append([tanks[i],self.shootingSolution(i),i]) #enemies[i][1][1] is the distance
+
+        #Merge sort
+        #This is not always working right
+        for i in range(len(self.enemies)):
+            min = 0
+            for j in range(i+1, len(self.enemies)):
+                if self.enemies[j][1][1] < self.enemies[min][1][1]:
+                    min = j
+            self.enemies[min], self.enemies[i] = self.enemies[i], self.enemies[min]
+
+        #turn and print debugging info
+        self.turnTo(self.enemies[0][1][0])
+        print(self.id,self.color, "aiming at ",self.enemies[0][2],self.enemies[0][1][0])
+        print(self.enemies)
     def shootingSolution(self, i):
         target_pos =tanks[i].getPos()
         squared = abs((target_pos[0]-self.x_pos)**2 + (target_pos[1]-self.y_pos)**2)
@@ -49,30 +64,24 @@ class Tank:
             distance = sqrt(squared)
         else:
             distance = 0
-        print("dist",distance)
         if target_pos[0] > self.x_pos and target_pos[1] > self.y_pos:
-            print("q1")
             angle = degrees(atan((target_pos[1] - self.y_pos)/(target_pos[0] - self.x_pos)))
         elif target_pos[0] < self.x_pos and target_pos[1] > self.y_pos:
-            print("q2")
             angle = 180-degrees(asin((target_pos[1] - self.y_pos) / distance))
         elif target_pos[0] < self.x_pos and target_pos[1] < self.y_pos:
-            print("q3")
             angle = 180+degrees(atan(abs(target_pos[1] - self.y_pos)/abs(target_pos[0] - self.x_pos)))
         elif target_pos[0] > self.x_pos and target_pos[1] < self.y_pos:
-            print("q4")
             angle = 360-degrees(acos(abs(target_pos[0] - self.x_pos) / distance))
         else:
             angle = 0
-        print ("angle",angle)
-        return angle
+        return [angle, distance]
 
 #Set up tanks
-tanks = [Tank(30, 30, 90, 'yellow')]
+tanks = [Tank(0, 30, 30, 90, 'yellow')]
 
 
-for i in range(0,tank_quantity-1):
-    tanks.append(Tank(random.randint(-200,200),random.randint(-200,200),random.randint(0,360),random.choice(['red','green','blue','black'])))
+for i in range(1,tank_quantity):
+    tanks.append(Tank(i, random.randint(-200,200),random.randint(-200,200),random.randint(0,360),random.choice(['red','green','blue','black'])))
 
 def keyUp():
     tanks[0].moveForward(5)
@@ -100,6 +109,8 @@ while True :                 # Infinite game loop
     
     screen.update()         # Display turtle drawing to the screen
 
+
     screen.listen()         # Listen for events like key presses
     for i in range(1,tank_quantity):
-        tanks[i].turnTo(tanks[i].shootingSolution(0))
+        tanks[i].findNearestTarget()
+        #tanks[i].turnTo(tanks[i].shootingSolution(0))
