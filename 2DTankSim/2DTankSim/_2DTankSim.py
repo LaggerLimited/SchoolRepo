@@ -6,6 +6,30 @@ tank_quantity = 5
 
 #Merge sorts a 2d array on column
 def mergeSort2d(arr, col):
+    if len(arr) > 1:
+        mid = len(arr)//2
+        left = arr[:mid]
+        right = arr[mid:]
+        mergeSort2d(left,col)
+        mergeSort2d(right,col)
+        i = j = k = 0
+
+        while i < len(left) and j < len(right):
+            if left[i][col] < right[j][col]:
+                arr[k] = left[i]
+                i += 1
+            else:
+                arr[k] = right[j]
+                j += 1
+            k += 1
+        while i < len(left):
+            arr[k] = left[i]
+            i+=1
+            k+=1
+        while j < len(right):
+            arr[k] = right[j]
+            j+=1
+            k+=1
     return arr
 
 class Tank:
@@ -55,7 +79,7 @@ class Tank:
         self.enemies = mergeSort2d(self.enemies,1)
         #turn and print debugging info
         self.turnTo(self.enemies[0][2])
-        print(self.id,self.color, "aiming at ",self.enemies[0][1],self.enemies[0][1])
+        print(self.id,self.color, "aiming at ",self.enemies[0][3],self.enemies[0][1])
         print(self.enemies)
     def shootingSolution(self, i):
         target_pos =tanks[i].getPos()
@@ -104,12 +128,8 @@ screen.onkeypress(keyRight, "Right")
 screen.onkeypress(keyDown, "Down")
 
 
-while True :                 # Infinite game loop
-
-    
+while True :                 # Infinite game loop   
     screen.update()         # Display turtle drawing to the screen
-
-
     screen.listen()         # Listen for events like key presses
     for i in range(1,tank_quantity):
         tanks[i].findNearestTarget()
