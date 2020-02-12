@@ -4,6 +4,10 @@ from math import *
 #number of tanks, including the player
 tank_quantity = 5
 
+#Merge sorts a 2d array on column
+def mergeSort2d(arr, col):
+    return arr
+
 class Tank:
     def __init__(self, id, x=0, y=0, ang=0, color='red'):
         self.id = id
@@ -22,6 +26,8 @@ class Tank:
         self.myTurtle.goto(self.x_pos,self.y_pos)
         self.enemies = []
 
+    def getColor(self):
+        return self.color
     def getPos(self):
         return [self.x_pos,self.y_pos]
     def addAngle(self, turn = 0):
@@ -40,22 +46,16 @@ class Tank:
     def findNearestTarget(self):
         #populate a list of enemies
         self.enemies = []
+        #Enemies is [index, range, angle, color]
         for i in range(0,tank_quantity):
             if i != self.id:
-                self.enemies.append([tanks[i],self.shootingSolution(i),i]) #enemies[i][1][1] is the distance
+                shooting = self.shootingSolution(i)
+                self.enemies.append([i,shooting[1],shooting[0],tanks[i].getColor()])
 
-        #Merge sort
-        #This is not always working right
-        for i in range(len(self.enemies)):
-            min = 0
-            for j in range(i+1, len(self.enemies)):
-                if self.enemies[j][1][1] < self.enemies[min][1][1]:
-                    min = j
-            self.enemies[min], self.enemies[i] = self.enemies[i], self.enemies[min]
-
+        self.enemies = mergeSort2d(self.enemies,1)
         #turn and print debugging info
-        self.turnTo(self.enemies[0][1][0])
-        print(self.id,self.color, "aiming at ",self.enemies[0][2],self.enemies[0][1][0])
+        self.turnTo(self.enemies[0][2])
+        print(self.id,self.color, "aiming at ",self.enemies[0][1],self.enemies[0][1])
         print(self.enemies)
     def shootingSolution(self, i):
         target_pos =tanks[i].getPos()
