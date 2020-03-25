@@ -1,5 +1,6 @@
 #2D Tank Game
-import turtle, random
+import turtle, random, sys
+from random import randint
 from math import *
 
 #number of tanks, including the player
@@ -100,6 +101,35 @@ class Tank:
         else:
             angle = 0
         return [angle, distance]
+
+#NOTE, maze is accessed as y,x NOT x,y
+#0,0 is the upper left corner
+def generateMaze(y,x,num_obs):
+    maze = [[ 0 for x in range(0,x)] for y in range(0,y)]
+    for i in range(0,num_obs):
+      obs_x = randint(0,x-1)
+      obs_y = randint(0,y-1)
+      maze[obs_y][obs_x] = 1
+    return maze
+
+#Display the maze in a human-friendly format
+def showMaze(maze):
+  for i in maze:
+    for j in i:
+      print(j, end='')
+    print();
+  
+WIDTH = 10
+HEIGHT = 20
+start = (randint(0,HEIGHT-1),randint(0,WIDTH-1))
+finish = (randint(0,HEIGHT-1),randint(0,WIDTH-1))
+print("Start: ",start, "Finish: ",finish)
+maze = generateMaze(HEIGHT,WIDTH,15)
+showMaze(maze)
+
+#Comment this out to get the tank simulation
+sys.exit(0)
+
 
 #Set up tanks
 tanks = [Tank(0, 30, 30, 90, 'yellow')]
