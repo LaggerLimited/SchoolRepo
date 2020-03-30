@@ -51,6 +51,7 @@ class tanks:
         else:
             angle = 0
         self.angle = math.radians(angle)
+        self.move()
 
  
 
@@ -87,7 +88,7 @@ def kend():
 def control(t):
     t.angle+=rotate
     t.v=velocity
-    print(t.x,t.y,t.angle,t.v)
+    t.move()
 
  
 
@@ -113,16 +114,16 @@ end=0
  
 
 t1=tanks(100,100,45,20,100,100,"blue","Tank 1",True)
-t2=tanks(50,50,45,20,.75,100,"red","Tank 2",True)
+enemies = [tanks(50,50,45,20,.75,100,"red","Tank 2",True), tanks(25,25,45,20,.5,100,"green","Tank 3",True)]
 
  
 
 screen.listen()
 
 while not end :
-    control(t1)
-    t2.chase(t1)
     turtle.clear()
-    t1.move()
-    t2.move()
+    control(t1)
+    for i in enemies:
+        i.chase(t1)
+    
     screen.update()   
