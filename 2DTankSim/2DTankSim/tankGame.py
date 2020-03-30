@@ -33,6 +33,25 @@ class tanks:
         self.y+=math.sin(self.angle)* self.v
         self.draw()
 
+    #Taken from our old project. We calculated in degrees, and this project uses radians, so we convert at the end
+    def chase(self, target):
+        squared = abs((target.x-self.x)**2 + (target.y-self.y)**2)
+        if squared != 0:
+            distance = math.sqrt(squared)
+        else:
+            distance = 0
+        if target.x > self.x and target.y > self.y:
+            angle = math.degrees(math.atan((target.y - self.y)/(target.x - self.x)))
+        elif target.x < self.x and target.y > self.y:
+            angle = 180-math.degrees(math.asin((target.y - self.y) / distance))
+        elif target.x < self.x and target.y < self.y:
+            angle = 180+math.degrees(math.atan(abs(target.y - self.y)/abs(target.x - self.x)))
+        elif target.x > self.x and target.y < self.y:
+            angle = 360-math.degrees(math.acos(abs(target.x - self.x) / distance))
+        else:
+            angle = 0
+        self.angle = math.radians(angle)
+
  
 
 def kmove():
@@ -68,6 +87,7 @@ def kend():
 def control(t):
     t.angle+=rotate
     t.v=velocity
+    print(t.x,t.y,t.angle,t.v)
 
  
 
@@ -93,6 +113,7 @@ end=0
  
 
 t1=tanks(100,100,45,20,100,100,"blue","Tank 1",True)
+t2=tanks(50,50,45,20,.75,100,"red","Tank 2",True)
 
  
 
@@ -100,6 +121,8 @@ screen.listen()
 
 while not end :
     control(t1)
+    t2.chase(t1)
     turtle.clear()
     t1.move()
+    t2.move()
     screen.update()   
