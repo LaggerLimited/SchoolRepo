@@ -1,7 +1,6 @@
 import turtle
-
 import math
-
+import random
  
 
 class tanks:
@@ -90,8 +89,77 @@ def control(t):
     t.v=velocity
     t.move()
 
- 
 
+class MazeNode():
+    def __init__(self, pos, parent=None):
+        self.parent = parent
+        self.pos = pos
+        self.h = self.g =self.f = 0
+    def __str__(self):
+        print("Position",self.pos,"parent",self.parent.pos,"h",self.h,"g",self.g,"f",self.f)
+        return ""
+#NOTE, maze is accessed as y,x NOT x,y
+#0,0 is the upper left corner
+def generateMaze(y,x,num_obs):
+    maze = [[ 0 for x in range(0,x)] for y in range(0,y)]
+    for i in range(0,num_obs):
+      obs_x = random.randint(0,x-1)
+      obs_y = random.randint(0,y-1)
+      maze[obs_y][obs_x] = 1
+    return maze
+
+#Display the maze in a human-friendly format
+def showMaze(maze):
+  for i in maze:
+    for j in i:
+      print(j, end='')
+    print();
+
+#Check if a square exists in the maze and is open
+def checkSquare(maze,y,x):
+    mazeHeight = len(maze)
+    mazeWidth = len(maze[0])
+
+    if(x < 0 or y < 0 or x > mazeWidth or y > mazeWidth):
+        return False
+    if(maze[y][x] == 0):
+        return True
+    return False
+
+def aStar(maze, start, end):
+    nodeData = {}
+    closedSet = []
+    openSet =[]
+    currentNode = MazeNode(start)
+    closedSet.append(currentNode)
+    while currentNode != end:
+        adjacent = []
+        #Create a list of adjacent nodes
+        if(checkSquare(maze,currentNode.pos[0]+1,currentNode.pos[1])):
+            adjacent.append((currentNode.pos[0]+1,currentNode.pos[1]))
+        if(checkSquare(maze,currentNode.pos[0],currentNode.pos[1]-1)):
+            adjacent.append((currentNode.pos[0],currentNode.pos[1]-1))
+        if(checkSquare(maze,currentNode.pos[0]-1,currentNode.pos[1])):
+            adjacent.append((currentNode.pos[0]-1,currentNode.pos[1]))
+        if(checkSquare(maze,currentNode.pos[0],currentNode.pos[1]+1)):
+            adjacent.append((currentNode.pos[0],currentNode.pos[1]+1))
+        for n in adjacent:
+            adjNode = MazeNode((n),currentNode)
+            print(adjNode)
+            if n in closedSet:
+                continue
+            elif n in openSet:
+                continue
+        break
+
+
+
+
+maze = generateMaze(5,5,8)
+showMaze(maze);
+aStar(maze,(1,1),(15,15))
+
+"""
 screen = turtle.Screen()
 screen.setup(500,500)
 screen.tracer(0) 
@@ -127,3 +195,4 @@ while not end :
         i.chase(t1)
     
     screen.update()   
+"""
