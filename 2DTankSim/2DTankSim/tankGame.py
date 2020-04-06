@@ -95,17 +95,18 @@ class MazeNode():
         self.parent = parent
         self.pos = pos
         self.h = self.g =self.f = 0
+        self.blocked = 0
     def __str__(self):
-        print("Position",self.pos,"parent",self.parent.pos,"h",self.h,"g",self.g,"f",self.f)
-        return ""
+        #print("Position",self.pos,"parent",self.parent.pos,"h",self.h,"g",self.g,"f",self.f)
+        return str(self.blocked)+"("+str(self.pos[0])+","+str(self.pos[1])+") "
 #NOTE, maze is accessed as y,x NOT x,y
 #0,0 is the upper left corner
 def generateMaze(y,x,num_obs):
-    maze = [[ 0 for x in range(0,x)] for y in range(0,y)]
+    maze = [[ MazeNode((y,x)) for x in range(0,x)] for y in range(0,y)]
     for i in range(0,num_obs):
       obs_x = random.randint(0,x-1)
       obs_y = random.randint(0,y-1)
-      maze[obs_y][obs_x] = 1
+      maze[obs_y][obs_x].blocked = 1
     return maze
 
 #Display the maze in a human-friendly format
@@ -122,7 +123,7 @@ def checkSquare(maze,y,x):
 
     if(x < 0 or y < 0 or x > mazeWidth or y > mazeWidth):
         return False
-    if(maze[y][x] == 0):
+    if(maze[y][x].blocked == 0):
         return True
     return False
 
@@ -130,11 +131,13 @@ def aStar(maze, start, end):
     nodeData = {}
     closedSet = []
     openSet =[]
-    currentNode = MazeNode(start)
+    currentNode = maze[start[0]][start[1]]
     closedSet.append(currentNode)
-    while currentNode != end:
+    while currentNode != maze[end[0]][end[1]]:
         adjacent = []
         #Create a list of adjacent nodes
+        #TODO: Make these append objects, not coords
+
         if(checkSquare(maze,currentNode.pos[0]+1,currentNode.pos[1])):
             adjacent.append((currentNode.pos[0]+1,currentNode.pos[1]))
         if(checkSquare(maze,currentNode.pos[0],currentNode.pos[1]-1)):
@@ -144,12 +147,28 @@ def aStar(maze, start, end):
         if(checkSquare(maze,currentNode.pos[0],currentNode.pos[1]+1)):
             adjacent.append((currentNode.pos[0],currentNode.pos[1]+1))
         for n in adjacent:
-            adjNode = MazeNode((n),currentNode)
-            print(adjNode)
+            print(n)
             if n in closedSet:
                 continue
             elif n in openSet:
-                continue
+                #Compute new G (cost from start to n, using currentNode as parent)
+                if new_g < n.g:
+                    n.parent = currentNode
+                    # compute n.h
+                    #compute n.g
+                    n.f = n.g + n.h
+            else:
+                n.parent = currentNode
+                #compute n.h
+                #compute n.g
+                n.f = n.g + n.h
+                openSet.append(n)
+        if openSet == []:
+            break
+        #currentNode = node with lowest F in openSet
+        #remove current node from openset
+        #add current node to closed set
+
         break
 
 
@@ -157,7 +176,7 @@ def aStar(maze, start, end):
 
 maze = generateMaze(5,5,8)
 showMaze(maze);
-aStar(maze,(1,1),(15,15))
+aStar(maze,(1,1),(3,3))
 
 """
 screen = turtle.Screen()
