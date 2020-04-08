@@ -136,16 +136,14 @@ def aStar(maze, start, end):
     while currentNode != maze[end[0]][end[1]]:
         adjacent = []
         #Create a list of adjacent nodes
-        #TODO: Make these append objects, not coords
-
         if(checkSquare(maze,currentNode.pos[0]+1,currentNode.pos[1])):
-            adjacent.append((currentNode.pos[0]+1,currentNode.pos[1]))
+            adjacent.append(maze[currentNode.pos[0]+1][currentNode.pos[1]])
         if(checkSquare(maze,currentNode.pos[0],currentNode.pos[1]-1)):
-            adjacent.append((currentNode.pos[0],currentNode.pos[1]-1))
+            adjacent.append(maze[currentNode.pos[0]][currentNode.pos[1]-1])
         if(checkSquare(maze,currentNode.pos[0]-1,currentNode.pos[1])):
-            adjacent.append((currentNode.pos[0]-1,currentNode.pos[1]))
+            adjacent.append(maze[currentNode.pos[0]-1][currentNode.pos[1]])
         if(checkSquare(maze,currentNode.pos[0],currentNode.pos[1]+1)):
-            adjacent.append((currentNode.pos[0],currentNode.pos[1]+1))
+            adjacent.append(maze[currentNode.pos[0]][currentNode.pos[1]+1])
         for n in adjacent:
             print(n)
             if n in closedSet:
