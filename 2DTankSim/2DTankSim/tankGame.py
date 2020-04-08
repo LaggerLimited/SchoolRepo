@@ -99,6 +99,10 @@ class MazeNode():
     def __str__(self):
         #print("Position",self.pos,"parent",self.parent.pos,"h",self.h,"g",self.g,"f",self.f)
         return str(self.blocked)+"("+str(self.pos[0])+","+str(self.pos[1])+") "
+    def tracePath(self):
+        print(self)
+        if(self.parent != None):
+            self.parent.tracePath()
 #NOTE, maze is accessed as y,x NOT x,y
 #0,0 is the upper left corner
 def generateMaze(y,x,num_obs):
@@ -127,6 +131,12 @@ def checkSquare(maze,y,x):
         return True
     return False
 
+#Calculate 'manhatten' distance between 2 points, used for aStar
+def h(start, end):
+    dx = start[1] - end[1]
+    dy = start[0] - end[0]
+    return math.sqrt(dx**2 + dy**2)
+
 def aStar(maze, start, end):
     nodeData = {}
     closedSet = []
@@ -134,6 +144,7 @@ def aStar(maze, start, end):
     currentNode = maze[start[0]][start[1]]
     closedSet.append(currentNode)
     while currentNode != maze[end[0]][end[1]]:
+        print("Working on node: ",currentNode)
         adjacent = []
         #Create a list of adjacent nodes
         if(checkSquare(maze,currentNode.pos[0]+1,currentNode.pos[1])):
@@ -145,36 +156,47 @@ def aStar(maze, start, end):
         if(checkSquare(maze,currentNode.pos[0],currentNode.pos[1]+1)):
             adjacent.append(maze[currentNode.pos[0]][currentNode.pos[1]+1])
         for n in adjacent:
-            print(n)
+            #print(n)
             if n in closedSet:
                 continue
             elif n in openSet:
-                #Compute new G (cost from start to n, using currentNode as parent)
+                new_g = currentNode.g + 1
                 if new_g < n.g:
                     n.parent = currentNode
-                    # compute n.h
-                    #compute n.g
+                    n.h = h(n.pos,end)
+                    n.g = n.parent.g + 1
                     n.f = n.g + n.h
             else:
                 n.parent = currentNode
-                #compute n.h
-                #compute n.g
+                n.h = h(n.pos,end)
+                n.g = n.parent.g + 1
                 n.f = n.g + n.h
                 openSet.append(n)
-        if openSet == []:
+        print(openSet)
+        print(closedSet)
+        if len(openSet) == 0:
+            print("empty open set")
             break
         #currentNode = node with lowest F in openSet
+        lowestF = 999999999
+        for i in openSet:
+            if i.f < lowestF:
+                currentNode = i
+                lowestF = i.f
         #remove current node from openset
+        openSet.remove(currentNode)
         #add current node to closed set
-
-        break
+        closedSet.append(currentNode)
+    print("a* done")
+    
 
 
 
 
 maze = generateMaze(5,5,8)
 showMaze(maze);
-aStar(maze,(1,1),(3,3))
+aStar(maze,(1,1),(4,4))
+maze[4][4].tracePath()
 
 """
 screen = turtle.Screen()
