@@ -34,19 +34,19 @@ class tanks:
 
     #Taken from our old project. We calculated in degrees, and this project uses radians, so we convert at the end
     def chase(self, target):
-        squared = abs((target.x-self.x)**2 + (target.y-self.y)**2)
+        squared = abs((target.pos[1]-self.x)**2 + (target.pos[0]-self.y)**2)
         if squared != 0:
             distance = math.sqrt(squared)
         else:
             distance = 0
-        if target.x > self.x and target.y > self.y:
-            angle = math.degrees(math.atan((target.y - self.y)/(target.x - self.x)))
-        elif target.x < self.x and target.y > self.y:
-            angle = 180-math.degrees(math.asin((target.y - self.y) / distance))
-        elif target.x < self.x and target.y < self.y:
-            angle = 180+math.degrees(math.atan(abs(target.y - self.y)/abs(target.x - self.x)))
-        elif target.x > self.x and target.y < self.y:
-            angle = 360-math.degrees(math.acos(abs(target.x - self.x) / distance))
+        if target.pos[1] > self.x and target.pos[0] > self.y:
+            angle = math.degrees(math.atan((target.pos[0] - self.y)/(target.pos[1] - self.x)))
+        elif target.pos[1] < self.x and target.pos[0] > self.y:
+            angle = 180-math.degrees(math.asin((target.pos[0] - self.y) / distance))
+        elif target.pos[1] < self.x and target.pos[0] < self.y:
+            angle = 180+math.degrees(math.atan(abs(target.pos[0] - self.y)/abs(target.pos[1] - self.x)))
+        elif target.pos[1] > self.x and target.pos[0] < self.y:
+            angle = 360-math.degrees(math.acos(abs(target.pos[1] - self.x) / distance))
         else:
             angle = 0
         self.angle = math.radians(angle)
@@ -56,7 +56,7 @@ class tanks:
 
 def kmove():
     global velocity
-    velocity=1
+    velocity=.01
 
 def kstop():
     global velocity
@@ -99,6 +99,15 @@ class MazeNode():
     def __str__(self):
         #print("Position",self.pos,"parent",self.parent.pos,"h",self.h,"g",self.g,"f",self.f)
         return str(self.blocked)+"("+str(self.pos[0])+","+str(self.pos[1])+") "
+    #return the next step you need to take to find this node, run after aStar()
+    def nextStep(self, count):
+        if(count > 20):
+            print("Count > 20")
+            return self
+        if self.parent != None:
+            if self.parent.parent != None:
+                return self.parent.nextStep(count+1)
+        return self
     def tracePath(self):
         print("Tracing Path",self)
         if(self.parent != None):
@@ -137,6 +146,7 @@ def h(start, end):
     dy = start[0] - end[0]
     return math.sqrt(dx**2 + dy**2)
 
+#TODO: Reset all h, g, f values at the start
 def aStar(maze, start, end):
     nodeData = {}
     closedSet = []
@@ -185,18 +195,27 @@ def aStar(maze, start, end):
         closedSet.append(currentNode)
     print("a* done")
     
+def drawMaze(maze):
+    for row in maze:
+        for node in row:
+            if node.blocked == 1:
+                turtle.pu()
+                turtle.goto(node.pos[1],node.pos[0])
+                turtle.stamp()
 
 
 
 
-maze = generateMaze(5,5,3)
+maze = generateMaze(10,10,10)
 showMaze(maze);
 aStar(maze,(1,1),(4,4))
 maze[4][4].tracePath()
+print(maze[4][4].nextStep(0))
 
-"""
+
 screen = turtle.Screen()
 screen.setup(500,500)
+screen.setworldcoordinates(0,0,9,9)
 screen.tracer(0) 
 
  
@@ -216,8 +235,9 @@ end=0
 
  
 
-t1=tanks(100,100,45,20,100,100,"blue","Tank 1",True)
-enemies = [tanks(50,50,45,20,.75,100,"red","Tank 2",True), tanks(25,25,45,20,.5,100,"green","Tank 3",True)]
+t1=tanks(8,8,45,.5,100,100,"blue","Tank 1",True)
+#enemies = [tanks(2,2,45,.5,.005,100,"red","Tank 2",True), tanks(1,1,45,.5,.007,100,"green","Tank 3",True)]
+enemies = [tanks(2,2,45,.5,.005,100,"red","Tank 2",True)]
 
  
 
@@ -225,9 +245,14 @@ screen.listen()
 
 while not end :
     turtle.clear()
+    drawMaze(maze)
     control(t1)
     for i in enemies:
-        i.chase(t1)
+        aStar(maze,(int(i.y),int(i.x)),(int(t1.y),int(t1.x)))
+        target = maze[int(t1.y)][int(t1.x)].nextStep(0)
+        print(target)
+        target.tracePath()
+        print("Player at: ",maze[int(t1.y)][int(t1.x)])
+        i.chase(target)
     
     screen.update()   
-"""
