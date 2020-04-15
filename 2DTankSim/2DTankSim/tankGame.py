@@ -28,8 +28,20 @@ class tanks:
         turtle.goto(self.x+math.cos(self.angle)*self.size * 1.5,self.y+math.sin(self.angle)*self.size *1.5)
              
     def move(self):
-        self.x+=math.cos(self.angle)* self.v
-        self.y+=math.sin(self.angle)* self.v
+        print("X Cord:" + str(self.x))
+        print("Y Cord:" + str(self.y))
+        if(self.x <= 9 and self.x >= 0):
+            self.x+=math.cos(self.angle) * self.v
+        if(self.y <= 9 and self.y >= 0):
+            self.y+=math.sin(self.angle) * self.v
+        if(self.x > 9):
+            self.x = 9
+        if(self.x < 0):
+            self.x = 0
+        if(self.y > 9):
+            self.y = 9
+        if(self.y < 0):
+            self.y = 0
         self.draw()
 
     #Taken from our old project. We calculated in degrees, and this project uses radians, so we convert at the end
@@ -52,12 +64,35 @@ class tanks:
         self.angle = math.radians(angle)
         self.move()
 
- 
+#Note, x1/y1 must be lower left corner 
 class wall:
     def __init__(self,x1,y1,x2,y2,color='blue'):
         self.x1 = x1
         self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
         self.color = color
+    def draw(self):
+        turtle.color(self.color)
+        turtle.pu()
+        turtle.goto(self.x1,self.y1)
+        turtle.begin_fill()
+        turtle.goto(self.x1,self.y2)
+        turtle.goto(self.x2,self.y2)
+        turtle.goto(self.x2,self.y1)
+        turtle.goto(self.x1,self.y1)
+        turtle.end_fill()
+    #Checks if an x/y coord collides with this wall
+    def checkCollision(self,x,y,r):
+        if (x >= self.x1 and x <= self.x2) and (y <= self.y2 and y >= self.y1):
+            return True
+        #WIP Work with radius, and return which side we're hitting
+        if(x >= self.x1 and x <= self.x2 and y - r <= self.y2 and y - r >= self.y1):
+            print("top")
+        return False
+
+
+
 def kmove():
     global velocity
     velocity=.01
@@ -221,7 +256,7 @@ WORLD_MAX_Y = 9
 
 screen = turtle.Screen()
 screen.setup(500,500)
-screen.setworldcoordinates(WORLD_MAX_X,WORLD_MAX_Y,0,0)
+screen.setworldcoordinates(0,0,WORLD_MAX_X,WORLD_MAX_Y)
 screen.tracer(0) 
 
  
@@ -240,8 +275,9 @@ rotate=0
 end=0
 
  
+walls = [wall(5,5,6,6,'red'),wall(7,7,9,8,'green')]
 
-t1=tanks(8,8,45,.5,100,100,"blue","Tank 1",True)
+t1=tanks(1,1,45,.5,100,100,"blue","Tank 1",True)
 #enemies = [tanks(2,2,45,.5,.005,100,"red","Tank 2",True), tanks(1,1,45,.5,.007,100,"green","Tank 3",True)]
 enemies = [tanks(2,2,45,.5,.005,100,"red","Tank 2",True)]
 
@@ -253,6 +289,10 @@ while not end :
     turtle.clear()
     #drawMaze(maze)
     control(t1)
+    for i in walls:
+        i.draw()
+        if(i.checkCollision(t1.x,t1.y,t1.size)):
+            print("Wall Collision with",i.color,"wall")
     for i in enemies:
         #aStar(maze,(int(i.y),int(i.x)),(int(t1.y),int(t1.x)))
         #target = maze[int(t1.y)][int(t1.x)].nextStep(0)
