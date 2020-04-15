@@ -209,13 +209,15 @@ def drawMaze(maze):
 maze = generateMaze(10,10,10)
 showMaze(maze);
 aStar(maze,(1,1),(4,4))
-maze[4][4].tracePath()
-print(maze[4][4].nextStep(0))
+#maze[4][4].tracePath()
+#print(maze[4][4].nextStep(0))
 
+WORLD_MAX_X = 9
+WORLD_MAX_Y = 9
 
 screen = turtle.Screen()
 screen.setup(500,500)
-screen.setworldcoordinates(0,0,9,9)
+screen.setworldcoordinates(0,0,WORLD_MAX_X,WORLD_MAX_Y)
 screen.tracer(0) 
 
  
@@ -245,14 +247,15 @@ screen.listen()
 
 while not end :
     turtle.clear()
-    drawMaze(maze)
+    #drawMaze(maze)
     control(t1)
     for i in enemies:
-        aStar(maze,(int(i.y),int(i.x)),(int(t1.y),int(t1.x)))
-        target = maze[int(t1.y)][int(t1.x)].nextStep(0)
-        print(target)
-        target.tracePath()
-        print("Player at: ",maze[int(t1.y)][int(t1.x)])
-        i.chase(target)
+        #aStar(maze,(int(i.y),int(i.x)),(int(t1.y),int(t1.x)))
+        #target = maze[int(t1.y)][int(t1.x)].nextStep(0)
+        #print(target)
+        #target.tracePath()
+        #print("Player at: ",maze[int(t1.y)][int(t1.x)])
+        #i.chase(target)
+        pass
     
     screen.update()   
