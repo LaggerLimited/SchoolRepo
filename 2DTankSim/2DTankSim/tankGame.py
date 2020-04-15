@@ -53,7 +53,11 @@ class tanks:
         self.move()
 
  
-
+class wall:
+    def __init__(self,x1,y1,x2,y2,color='blue'):
+        self.x1 = x1
+        self.y1 = y1
+        self.color = color
 def kmove():
     global velocity
     velocity=.01
@@ -217,7 +221,7 @@ WORLD_MAX_Y = 9
 
 screen = turtle.Screen()
 screen.setup(500,500)
-screen.setworldcoordinates(0,0,WORLD_MAX_X,WORLD_MAX_Y)
+screen.setworldcoordinates(WORLD_MAX_X,WORLD_MAX_Y,0,0)
 screen.tracer(0) 
 
  
