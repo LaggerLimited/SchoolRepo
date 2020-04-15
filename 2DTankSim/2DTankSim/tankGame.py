@@ -28,20 +28,20 @@ class tanks:
         turtle.goto(self.x+math.cos(self.angle)*self.size * 1.5,self.y+math.sin(self.angle)*self.size *1.5)
              
     def move(self):
-        if(self.x > 9):
-            self.x = 8.98
+        if(self.x > 8.45):
+            self.x = 8.44
         else:
             self.x+=math.cos(self.angle) * self.v
-        if(self.x < 0):
-            self.x = .01
+        if(self.x < .35):
+            self.x = .36
         else:
             self.y+=math.sin(self.angle) * self.v
-        if(self.y > 9):
-            self.y = 8.98
+        if(self.y > 8.45):
+            self.y = 8.44
         else:
             self.x+=math.cos(self.angle) * self.v
-        if(self.y < 0):
-            self.y = .01
+        if(self.y < .35):
+            self.y = .36
         else:
             self.y+=math.sin(self.angle) * self.v
         self.draw()
