@@ -28,20 +28,22 @@ class tanks:
         turtle.goto(self.x+math.cos(self.angle)*self.size * 1.5,self.y+math.sin(self.angle)*self.size *1.5)
              
     def move(self):
-        print("X Cord:" + str(self.x))
-        print("Y Cord:" + str(self.y))
-        if(self.x <= 9 and self.x >= 0):
-            self.x+=math.cos(self.angle) * self.v
-        if(self.y <= 9 and self.y >= 0):
-            self.y+=math.sin(self.angle) * self.v
         if(self.x > 9):
-            self.x = 9
+            self.x = 8.98
+        else:
+            self.x+=math.cos(self.angle) * self.v
         if(self.x < 0):
-            self.x = 0
+            self.x = .01
+        else:
+            self.y+=math.sin(self.angle) * self.v
         if(self.y > 9):
-            self.y = 9
+            self.y = 8.98
+        else:
+            self.x+=math.cos(self.angle) * self.v
         if(self.y < 0):
-            self.y = 0
+            self.y = .01
+        else:
+            self.y+=math.sin(self.angle) * self.v
         self.draw()
 
     #Taken from our old project. We calculated in degrees, and this project uses radians, so we convert at the end
