@@ -66,6 +66,8 @@ class tanks:
 
     #Taken from our old project. We calculated in degrees, and this project uses radians, so we convert at the end
     def chase(self, target):
+        if(target == None):
+            return
         squared = abs((target.pos[1]-self.x)**2 + (target.pos[0]-self.y)**2)
         if squared != 0:
             distance = math.sqrt(squared)
@@ -106,13 +108,12 @@ class wall:
     def checkCollision(self,x,y,r):
         if (x + r >= self.x1 and x -r <= self.x2) and (y -r <= self.y2 and y + r >= self.y1):
             if (x >= self.x1 and x <= self.x2):
-                print("y collision with",self.color)
+                #print("y collision with",self.color)
                 return "y"
             if(y <= self.y2 and y >= self.y1):
-                print("x collision with",self.color)
+                #print("x collision with",self.color)
                 return "x"
-            print("all collision with",self.color)
-            #return "a"
+            return "a"
         return False
 
 def kmove():
@@ -169,6 +170,8 @@ class MazeNode():
         if self.parent != None:
             if self.parent.parent != None:
                 return self.parent.nextStep(count+1)
+            else:
+                return self
         return self
     def tracePath(self):
         print("Tracing Path",self)
@@ -190,6 +193,16 @@ def showMaze(maze):
     for j in i:
       print(j, end='')
     print();
+
+def showMazeSolution(maze):
+    for i in maze:
+        for j in i:
+            if j.parent == None:
+                print(j,"0(X,X)", end='**')
+            else:
+                print(j, j.parent,end='**')
+        print()
+
 
 #Check if a square exists in the maze and is open
 def checkSquare(maze,y,x):
@@ -301,17 +314,20 @@ end=0
 #walls = [wall(5,5,6,6,'red'),wall(7,7,9,8,'green')]
 walls = []
 maze[1][1].blocked = 0
-maze[9][9].blocked = 0
+maze[7][7].blocked = 0
 for i in maze:
     for j in i:
         if j.blocked == 1:
-            walls.append(wall(j.pos[1]-.5,j.pos[0]-.5,j.pos[1]+.5,j.pos[0]+.5,'green'))
+            walls.append(wall(j.pos[1]-.3,j.pos[0]-.3,j.pos[1]+.3,j.pos[0]+.3,'green'))
 
 t1=tanks(1,1,45,.5,100,100,"blue","Tank 1",True)
 #enemies = [tanks(2,2,45,.5,.005,100,"red","Tank 2",True), tanks(1,1,45,.5,.007,100,"green","Tank 3",True)]
-enemies = [tanks(9,9,45,.5,.005,100,"red","Tank 2",True)]
+enemies = [tanks(7,7,45,.5,.005,100,"red","Tank 2",True)]
 
 screen.listen()
+
+
+
 
 while not end :
     turtle.clear()
@@ -320,12 +336,14 @@ while not end :
     for i in walls:
         i.draw()
     for i in enemies:
-        #aStar(maze,(int(i.y),int(i.x)),(int(t1.y),int(t1.x)))
-        #target = maze[int(t1.y)][int(t1.x)].nextStep(0)
-        #print(target)
-        #target.tracePath()
-        #print("Player at: ",maze[int(t1.y)][int(t1.x)])
-        #i.chase(target)
-        pass
+        aStar(maze,(int(t1.y),int(t1.x)),(int(i.y),int(i.x)))
+        #showMazeSolution(maze)
+        target = maze[int(i.y)][int(i.x)].parent
+        print("enemy at",i.x,i.y)
+        print("Target",target)
+        print("Player at: ",maze[int(t1.y)][int(t1.x)])
+        i.chase(target)
+
+    pass
     
     screen.update()   
