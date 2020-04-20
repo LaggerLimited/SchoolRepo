@@ -105,12 +105,12 @@ class wall:
     #Checks if an x/y coord collides with this wall
     def checkCollision(self,x,y,r):
         if (x + r >= self.x1 and x -r <= self.x2) and (y -r <= self.y2 and y + r >= self.y1):
-            if(x + r <= self.x1 or x -r >= self.x2):
-                print("x collision with",self.color)
-                return "x"
-            if(y -r >= self.y2 or y + r <= self.y1):
+            if (x >= self.x1 and x <= self.x2):
                 print("y collision with",self.color)
                 return "y"
+            if(y <= self.y2 and y >= self.y1):
+                print("x collision with",self.color)
+                return "x"
             print("all collision with",self.color)
             return "a"
         return False
@@ -302,7 +302,7 @@ walls = [wall(5,5,6,6,'red'),wall(7,7,9,8,'green')]
 
 t1=tanks(1,1,45,.5,100,100,"blue","Tank 1",True)
 #enemies = [tanks(2,2,45,.5,.005,100,"red","Tank 2",True), tanks(1,1,45,.5,.007,100,"green","Tank 3",True)]
-enemies = [tanks(2,2,45,.5,.005,100,"red","Tank 2",True)]
+enemies = [tanks(9,9,45,.5,.005,100,"red","Tank 2",True)]
 
 screen.listen()
 
