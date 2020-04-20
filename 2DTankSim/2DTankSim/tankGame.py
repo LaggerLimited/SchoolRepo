@@ -1,7 +1,10 @@
 import turtle
 import math
 import random
- 
+xMax = 8.45
+xMin = .35
+yMax = 8.45
+yMin = .35
 
 class tanks:
     def __init__(self,x,y,angle,size,v,health,color,name,active):
@@ -28,23 +31,25 @@ class tanks:
         turtle.goto(self.x+math.cos(self.angle)*self.size * 1.5,self.y+math.sin(self.angle)*self.size *1.5)
              
     def move(self):
-        if(self.x > 8.45):
-            self.x = 8.44
+        if(self.x > xMax):
+            self.x = xMax - .01
         else:
             self.x+=math.cos(self.angle) * self.v
-        if(self.x < .35):
-            self.x = .36
+        if(self.x < xMin):
+            self.x = xMin + .01
         else:
             self.y+=math.sin(self.angle) * self.v
-        if(self.y > 8.45):
-            self.y = 8.44
+        if(self.y > yMax):
+            self.y = yMax - .01
         else:
             self.x+=math.cos(self.angle) * self.v
-        if(self.y < .35):
-            self.y = .36
+        if(self.y < yMin):
+            self.y = yMin + .01
         else:
             self.y+=math.sin(self.angle) * self.v
+
         self.draw()
+
 
     #Taken from our old project. We calculated in degrees, and this project uses radians, so we convert at the end
     def chase(self, target):
@@ -86,14 +91,29 @@ class wall:
         turtle.end_fill()
     #Checks if an x/y coord collides with this wall
     def checkCollision(self,x,y,r):
-        if (x >= self.x1 and x <= self.x2) and (y <= self.y2 and y >= self.y1):
+        if (x >= (self.x1)  and x <= (self.x2)) and (y <= (self.y2) and y >= (self.y1)):
+            # Calculate the distance to each side of the wall
+            leftSide = abs(self.x1 - x)
+            rightSide = abs(self.x2 - x)
+            topSide = abs(self.y2 - y)
+            bottomSide = abs(self.y1 - y)
+            # Create array of sides
+            sideValues = [leftSide, rightSide, topSide, bottomSide]
+            # Find the minimum value in the list of sides
+            minValue = min(sideValues)
+            side = ""
+            # Print the side being touched by the tank
+            if(leftSide == minValue):
+                side = "left"
+            if(rightSide == minValue):
+                side = "right"
+            if(bottomSide == minValue):
+                side = "bottom"
+            if(topSide == minValue):
+                side = "top"
+            print("Touched the " + side + " side")
             return True
-        #WIP Work with radius, and return which side we're hitting
-        if(x >= self.x1 and x <= self.x2 and y - r <= self.y2 and y - r >= self.y1):
-            print("top")
         return False
-
-
 
 def kmove():
     global velocity
@@ -283,8 +303,6 @@ t1=tanks(1,1,45,.5,100,100,"blue","Tank 1",True)
 #enemies = [tanks(2,2,45,.5,.005,100,"red","Tank 2",True), tanks(1,1,45,.5,.007,100,"green","Tank 3",True)]
 enemies = [tanks(2,2,45,.5,.005,100,"red","Tank 2",True)]
 
- 
-
 screen.listen()
 
 while not end :
@@ -294,7 +312,13 @@ while not end :
     for i in walls:
         i.draw()
         if(i.checkCollision(t1.x,t1.y,t1.size)):
+            # Change x/y_Max/Min
             print("Wall Collision with",i.color,"wall")
+        else:
+            xMax = 8.45
+            xMin = .35
+            yMax = 8.45
+            yMin = .35
     for i in enemies:
         #aStar(maze,(int(i.y),int(i.x)),(int(t1.y),int(t1.x)))
         #target = maze[int(t1.y)][int(t1.x)].nextStep(0)
