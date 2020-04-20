@@ -31,6 +31,9 @@ class tanks:
         turtle.goto(self.x+math.cos(self.angle)*self.size * 1.5,self.y+math.sin(self.angle)*self.size *1.5)
              
     def move(self):
+        old_x = self.x
+        old_y = self.y
+
         if(self.x > xMax):
             self.x = xMax - .01
         else:
@@ -47,6 +50,16 @@ class tanks:
             self.y = yMin + .01
         else:
             self.y+=math.sin(self.angle) * self.v
+
+        for i in walls:
+            col_result = i.checkCollision(self.x,self.y,self.size)
+            if(col_result == "y"):
+                self.y = old_y
+            if(col_result == "x"):
+                self.x = old_x
+            if(col_result == "a"):
+                self.x = old_x
+                self.y = old_y
 
         self.draw()
 
@@ -91,33 +104,21 @@ class wall:
         turtle.end_fill()
     #Checks if an x/y coord collides with this wall
     def checkCollision(self,x,y,r):
-        if (x >= (self.x1)  and x <= (self.x2)) and (y <= (self.y2) and y >= (self.y1)):
-            # Calculate the distance to each side of the wall
-            leftSide = abs(self.x1 - x)
-            rightSide = abs(self.x2 - x)
-            topSide = abs(self.y2 - y)
-            bottomSide = abs(self.y1 - y)
-            # Create array of sides
-            sideValues = [leftSide, rightSide, topSide, bottomSide]
-            # Find the minimum value in the list of sides
-            minValue = min(sideValues)
-            side = ""
-            # Print the side being touched by the tank
-            if(leftSide == minValue):
-                side = "left"
-            if(rightSide == minValue):
-                side = "right"
-            if(bottomSide == minValue):
-                side = "bottom"
-            if(topSide == minValue):
-                side = "top"
-            print("Touched the " + side + " side")
-            return True
+        if (x + r >= self.x1 and x -r <= self.x2) and (y -r <= self.y2 and y + r >= self.y1):
+            if(x + r <= self.x1 or x -r >= self.x2):
+                print("x collision with",self.color)
+                return "x"
+            if(y -r >= self.y2 or y + r <= self.y1):
+                print("y collision with",self.color)
+                return "y"
+            print("all collision with",self.color)
+            return "a"
         return False
 
 def kmove():
     global velocity
     velocity=.01
+    print(t1.x,t1.y)
 
 def kstop():
     global velocity
@@ -311,14 +312,6 @@ while not end :
     control(t1)
     for i in walls:
         i.draw()
-        if(i.checkCollision(t1.x,t1.y,t1.size)):
-            # Change x/y_Max/Min
-            print("Wall Collision with",i.color,"wall")
-        else:
-            xMax = 8.45
-            xMin = .35
-            yMax = 8.45
-            yMin = .35
     for i in enemies:
         #aStar(maze,(int(i.y),int(i.x)),(int(t1.y),int(t1.x)))
         #target = maze[int(t1.y)][int(t1.x)].nextStep(0)
