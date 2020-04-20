@@ -112,7 +112,7 @@ class wall:
                 print("x collision with",self.color)
                 return "x"
             print("all collision with",self.color)
-            return "a"
+            #return "a"
         return False
 
 def kmove():
@@ -298,7 +298,14 @@ rotate=0
 end=0
 
  
-walls = [wall(5,5,6,6,'red'),wall(7,7,9,8,'green')]
+#walls = [wall(5,5,6,6,'red'),wall(7,7,9,8,'green')]
+walls = []
+maze[1][1].blocked = 0
+maze[9][9].blocked = 0
+for i in maze:
+    for j in i:
+        if j.blocked == 1:
+            walls.append(wall(j.pos[1]-.5,j.pos[0]-.5,j.pos[1]+.5,j.pos[0]+.5,'green'))
 
 t1=tanks(1,1,45,.5,100,100,"blue","Tank 1",True)
 #enemies = [tanks(2,2,45,.5,.005,100,"red","Tank 2",True), tanks(1,1,45,.5,.007,100,"green","Tank 3",True)]
