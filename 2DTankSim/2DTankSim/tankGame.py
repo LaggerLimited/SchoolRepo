@@ -51,21 +51,24 @@ class tanks:
         else:
             self.y+=math.sin(self.angle) * self.v
 
-        for i in walls:
-            col_result = i.checkCollision(self.x,self.y,self.size)
-            if(col_result == "y"):
-                self.y = old_y
-            if(col_result == "x"):
-                self.x = old_x
-            if(col_result == "a"):
-                self.x = old_x
-                self.y = old_y
+        #Exempt enemy tanks from wall collision, they won't drive into walls anyway due to A*
+        if self.color != "red":
+            for i in walls:
+                col_result = i.checkCollision(self.x,self.y,self.size)
+                if(col_result == "y"):
+                    self.y = old_y
+                if(col_result == "x"):
+                    self.x = old_x
+                if(col_result == "a"):
+                    self.x = old_x
+                    self.y = old_y
 
         self.draw()
 
 
     #Taken from our old project. We calculated in degrees, and this project uses radians, so we convert at the end
     def chase(self, target):
+        #print("chasing",target)
         if(target == None):
             return
         squared = abs((target.pos[1]-self.x)**2 + (target.pos[0]-self.y)**2)
@@ -119,7 +122,7 @@ class wall:
 def kmove():
     global velocity
     velocity=.01
-    print(t1.x,t1.y)
+    #print(t1.x,t1.y)
 
 def kstop():
     global velocity
@@ -174,7 +177,7 @@ class MazeNode():
                 return self
         return self
     def tracePath(self):
-        print("Tracing Path",self)
+        print(self)
         if(self.parent != None):
             self.parent.tracePath()
 #NOTE, maze is accessed as y,x NOT x,y
@@ -228,6 +231,11 @@ def aStar(maze, start, end):
     openSet =[]
     currentNode = maze[start[0]][start[1]]
     closedSet.append(currentNode)
+    for i in maze:
+        for j in i:
+            j.parent = None
+            j.h = j.g =j.f = 0
+
     while currentNode != maze[end[0]][end[1]]:
         adjacent = []
         #Create a list of adjacent nodes
@@ -268,7 +276,7 @@ def aStar(maze, start, end):
         openSet.remove(currentNode)
         #add current node to closed set
         closedSet.append(currentNode)
-    print("a* done")
+    #print("a* done")
     
 def drawMaze(maze):
     for row in maze:
@@ -283,8 +291,9 @@ def drawMaze(maze):
 
 maze = generateMaze(10,10,10)
 showMaze(maze);
-aStar(maze,(1,1),(4,4))
-#maze[4][4].tracePath()
+aStar(maze,(1,1),(7,7))
+print("Finding route from 7,7 to 1,1...")
+maze[4][4].tracePath()
 #print(maze[4][4].nextStep(0))
 
 WORLD_MAX_X = 9
@@ -338,7 +347,7 @@ while not end :
     for i in enemies:
         aStar(maze,(int(t1.y),int(t1.x)),(int(i.y),int(i.x)))
         #showMazeSolution(maze)
-        target = maze[int(i.y)][int(i.x)].parent
+        target = maze[int(i.y)][int(i.x)].parent.parent
         print("enemy at",i.x,i.y)
         print("Target",target)
         print("Player at: ",maze[int(t1.y)][int(t1.x)])
